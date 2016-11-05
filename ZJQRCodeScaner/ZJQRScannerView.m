@@ -344,7 +344,7 @@
         AVCaptureSession *session = [[AVCaptureSession alloc] init];
         if ([session canSetSessionPreset:AVCaptureSessionPreset1920x1080]) {
             // 设置为这个模式, 可以快速精确的扫描到较小的二维码
-            session.sessionPreset = AVCaptureSessionPreset1920x1080;
+//            session.sessionPreset = AVCaptureSessionPreset1920x1080;
         }
         _session = session;
     }
