@@ -49,4 +49,15 @@
  *  @return 返回合成的图片
  */
 + (UIImage *)composeQRCodeImage:(UIImage *)codeImage withImage:(UIImage *)image withImageSideLength:(CGFloat)sideLength;
+
+/**
+ *  改变二维码的图片的颜色
+ *
+ *  @param image           二维码图片
+ *  @param backgroundColor 背景色
+ *  @param frontColor      二维码颜色
+ *
+ *  @return 图片
+ */
++ (UIImage *)changeColorForQRImage:(UIImage *)image backgroundColor:(UIColor *)backgroundColor frontColor:(UIColor *)frontColor;
 @end

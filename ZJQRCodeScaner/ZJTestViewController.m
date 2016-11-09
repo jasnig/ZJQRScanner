@@ -14,6 +14,7 @@
 @property (strong, nonatomic) UIImageView *imageView;
 @property (strong, nonatomic) UIImage *qrImage;
 
+@property (strong, nonatomic) ZJQRScannerView *scanner;
 @end
 
 @implementation ZJTestViewController
@@ -23,16 +24,23 @@
     self.view.backgroundColor = [UIColor whiteColor];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    // 停止
+    [_scanner stopScanning];
+}
+
 - (void)startScanner {
     [ZJProgressHUD showStatus:@"需要真机测试" andAutoHideAfterTime:1.0];
+    
+    _scanner = [ZJQRScannerView new];
+    _scanner.frame = self.view.bounds;
+    [self.view addSubview:_scanner];
 
-    ZJQRScannerView *scanner = [ZJQRScannerView new];
-    scanner.frame = self.view.bounds;
-    [self.view addSubview:scanner];
     // 开始扫描
-    [scanner startScanning];
+    [_scanner startScanning];
     // 扫描完成
-    [scanner setScannerFinishHandler:^(ZJQRScannerView *scanner, NSString *resultString) {
+    [_scanner setScannerFinishHandler:^(ZJQRScannerView *scanner, NSString *resultString) {
         // 扫描结束
         NSLog(@"内容是%@", resultString);
     }];
@@ -46,13 +54,14 @@
 
 - (void)setQrImage:(UIImage *)qrImage {
     _imageView = [[UIImageView alloc] initWithImage:qrImage];
-    
     _imageView.center = self.view.center;
     [self.view addSubview:_imageView];
 }
 
 - (void)createCodeWithQRString:(NSString *)qrString andLogoImage:(UIImage *)logo {
     UIImage *qrImage = [ZJQRScanerHelper createQRCodeWithString:qrString withSideLength:200.f];
+    // 改变颜色
+    qrImage = [ZJQRScanerHelper changeColorForQRImage:qrImage backgroundColor:[UIColor redColor] frontColor:[UIColor blueColor]];
     if (logo) {
         qrImage = [ZJQRScanerHelper composeQRCodeImage:qrImage withImage:logo withImageSideLength:40.f];
 

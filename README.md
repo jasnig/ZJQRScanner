@@ -1,6 +1,8 @@
 # ZJQRScanner
 一个扫描二维码, 生成二维码, 识别图片中的二维码的demo, 可以直接使用
 
+* 注意 iOS 10访问相机需要自行修改info.plist文件 
+
 ![qrScanner.gif](http://upload-images.jianshu.io/upload_images/1271831-abac79315cd5e171.gif?imageMogr2/auto-orient/strip)
 
 ```

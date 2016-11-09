@@ -27,7 +27,7 @@
 // 摄像头采集到的画面展示
 @property (strong, nonatomic) AVCaptureVideoPreviewLayer *previewLayer;
 // 我们自定义线程 来处理耗时操作-- 开始采集
-@property (strong, nonatomic) dispatch_queue_t sessionQueue;
+//@property (strong, nonatomic) dispatch_queue_t sessionQueue;
 
 @property (strong, nonatomic) UIImageView *backgroundImageView;
 @property (strong, nonatomic) UIImageView *scrollImageView;
@@ -64,9 +64,15 @@
 - (void)commonInit {
     _slideLength = 200;
     _scrollImageAnimateDuration = 2.f;
+    
+#if (TARGET_IPHONE_SIMULATOR)
+    NSAssert(NO, @"需要真机测试");
+    
+#else 
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fitOrientation) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
     // 使用SERIAL 保证FIFO
-    self.sessionQueue = dispatch_queue_create("ZJCameraViewSession", DISPATCH_QUEUE_SERIAL);
+//    self.sessionQueue = dispatch_queue_create("ZJCameraViewSession", DISPATCH_QUEUE_SERIAL);
     // 开始编辑输入和输出设备
     [self.session beginConfiguration];
     // 添加前一定要判断是否能够添加这种类型的设备, 否则不支持会crash
@@ -88,6 +94,9 @@
     }
     // 设置子控件
     [self setupSubviews];
+
+#endif
+    
 }
 
 
@@ -165,6 +174,9 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+#if DEBUG
+    NSLog(@"ZJScannerView---dealloc");
+#endif
 }
 
 - (void)fitOrientation {
@@ -215,18 +227,15 @@
 }
 
 - (void)startScanning {
-    // 耗时操作 另开线程
-    dispatch_async(self.sessionQueue, ^{
-        // 获取授权
-        [AVCaptureDevice requestAccessForMediaType:AVMediaTypeVideo completionHandler:^( BOOL granted ) {
-            if (granted) {
-                [self.session startRunning];
-            }
-            else {
-                NSLog(@"用户未授权访问摄像头");
-            }
-        }];
-    });
+    
+#if (TARGET_IPHONE_SIMULATOR)
+    NSAssert(NO, @"需要真机测试");
+#else
+
+    [self.session startRunning];
+
+    
+#endif
 }
 
 - (void)stopScanning {
@@ -344,7 +353,7 @@
         AVCaptureSession *session = [[AVCaptureSession alloc] init];
         if ([session canSetSessionPreset:AVCaptureSessionPreset1920x1080]) {
             // 设置为这个模式, 可以快速精确的扫描到较小的二维码
-//            session.sessionPreset = AVCaptureSessionPreset1920x1080;
+            session.sessionPreset = AVCaptureSessionPreset1920x1080;
         }
         _session = session;
     }

@@ -104,5 +104,18 @@
 }
 
 
++ (UIImage *)changeColorForQRImage:(UIImage *)image backgroundColor:(UIColor *)backgroundColor frontColor:(UIColor *)frontColor
+{
+    CIFilter *colorFilter = [CIFilter filterWithName:@"CIFalseColor"
+                                       keysAndValues:
+                             @"inputImage",[CIImage imageWithCGImage:image.CGImage],
+                             @"inputColor0",[CIColor colorWithCGColor:frontColor.CGColor],
+                             @"inputColor1",[CIColor colorWithCGColor:backgroundColor.CGColor],
+                             nil];
+    // 缩放为原来的尺寸
+    UIImage *scaledImage = [ZJQRScanerHelper scaleImage:colorFilter.outputImage withSideLength:image.size.width];
+    return scaledImage;
+}
+
 
 @end
